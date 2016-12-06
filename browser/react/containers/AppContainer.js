@@ -12,11 +12,14 @@ import Player from '../components/Player';
 
 import { convertAlbum, convertAlbums, convertSong, skip } from '../utils';
 
+import store from '../store';
+import {play, pause, load, startSong, toggle, toggleOne } from '../action-creators/player';
+
 export default class AppContainer extends Component {
 
   constructor (props) {
     super(props);
-    this.state = initialState;
+    this.state = store.getState();
 
     this.toggle = this.toggle.bind(this);
     this.toggleOne = this.toggleOne.bind(this);
@@ -56,34 +59,39 @@ export default class AppContainer extends Component {
   }
 
   play () {
-    AUDIO.play();
-    this.setState({ isPlaying: true });
+    // AUDIO.play();
+    // this.setState({ isPlaying: true });
+    store.dispatch(play());
   }
 
   pause () {
-    AUDIO.pause();
-    this.setState({ isPlaying: false });
+    // AUDIO.pause();
+    // this.setState({ isPlaying: false });
+    store.dispatch(pause());
   }
 
   load (currentSong, currentSongList) {
-    AUDIO.src = currentSong.audioUrl;
-    AUDIO.load();
-    this.setState({
-      currentSong: currentSong,
-      currentSongList: currentSongList
-    });
+    // AUDIO.src = currentSong.audioUrl;
+    // AUDIO.load();
+    // this.setState({
+    //   currentSong: currentSong,
+    //   currentSongList: currentSongList
+    // });
+    store.dispatch(load(currentSong, currentSongList));
   }
 
   startSong (song, list) {
-    this.pause();
-    this.load(song, list);
-    this.play();
+    // this.pause();
+    // this.load(song, list);
+    // this.play();
+    store.dispatch(startSong(song, list));
   }
 
   toggleOne (selectedSong, selectedSongList) {
-    if (selectedSong.id !== this.state.currentSong.id)
-      this.startSong(selectedSong, selectedSongList);
-    else this.toggle();
+    // if (selectedSong.id !== this.state.currentSong.id)
+    //   this.startSong(selectedSong, selectedSongList);
+    // else this.toggle();
+    store.dispatch(toggleOne(selectedSong, selectedSongList));
   }
 
   toggle () {
