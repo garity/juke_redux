@@ -1,7 +1,7 @@
 import { SET_LYRICS } from '../constants';
 
 const initialState = {
-  text: ''
+  lyric: ''
 }
 
 export default function (state = initialState, action) {
@@ -11,9 +11,13 @@ export default function (state = initialState, action) {
   switch(action.type) {
 
     case SET_LYRICS:
-      newState = Object.assign({}, state, { text: action.lyric });
+      newState = Object.assign({}, state, { lyric: action.lyric });
+      break;
 
     default:
       return state;
   }
+
+  return newState;
+
 }
