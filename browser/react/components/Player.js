@@ -9,6 +9,7 @@ const Player = (props) => {
   const prev = props.prev;
   const toggle = props.toggle;
   const next = props.next;
+  // console.log(props);
 
   return (
     <footer>

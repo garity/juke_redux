@@ -19,11 +19,11 @@ export default function (state = initialPlayerState, action) {
   switch (action.type) {
 
     case SET_CURRENT_SONG:
-      newState
+      newState.currentSong = action.currentSong
       break;
 
     case SET_LIST:
-      newState:
+      newState.currentSongList = action.currentSongList
       break;
 
     case START_PLAYING:

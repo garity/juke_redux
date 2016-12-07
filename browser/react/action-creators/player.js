@@ -17,14 +17,14 @@ export const stopPlaying = function() {
 export const setCurrentSong = function(currentSong){
   return {
     type: SET_CURRENT_SONG,
-    currentSong
+    currentSong: currentSong
   }
 };
 
 export const setList = function(currentSongList){
   return {
     type: SET_LIST,
-    currentSongList
+    currentSongList: currentSongList
   }
 };
 
@@ -48,8 +48,8 @@ export const load = function(currentSong, currentSongList){
   return dispatch => {
     AUDIO.src = currentSong.audioUrl;
     AUDIO.load();
-    dispatch(setCurrentSong());
-    dispatch(setList());
+    dispatch(setCurrentSong(currentSong));
+    dispatch(setList(currentSongList));
   }
 };
 

@@ -13,13 +13,13 @@ import Player from '../components/Player';
 import { convertAlbum, convertAlbums, convertSong, skip } from '../utils';
 
 import store from '../store';
-import {play, pause, load, startSong, toggle, toggleOne } from '../action-creators/player';
+import {play, pause, load, startSong, toggle, toggleOne, next, prev } from '../action-creators/player';
 
 export default class AppContainer extends Component {
 
   constructor (props) {
     super(props);
-    this.state = store.getState();
+    this.state = Object.assign({}, initialState, store.getState());
 
     this.toggle = this.toggle.bind(this);
     this.toggleOne = this.toggleOne.bind(this);
@@ -34,7 +34,10 @@ export default class AppContainer extends Component {
   }
 
   componentDidMount () {
-
+    this.unsubscribe = store.subscribe( () => {
+      this.setState(store.getState());
+    });
+    
     Promise
       .all([
         axios.get('/api/albums/'),
@@ -43,11 +46,17 @@ export default class AppContainer extends Component {
       ])
       .then(res => res.map(r => r.data))
       .then(data => this.onLoad(...data));
-
+      
+    
+    console.log(this.state);
     AUDIO.addEventListener('ended', () =>
       this.next());
     AUDIO.addEventListener('timeupdate', () =>
       this.setProgress(AUDIO.currentTime / AUDIO.duration));
+  }
+
+  componentWillUnmount () {
+    this.unsubscribe();
   }
 
   onLoad (albums, artists, playlists) {
@@ -95,16 +104,19 @@ export default class AppContainer extends Component {
   }
 
   toggle () {
-    if (this.state.isPlaying) this.pause();
-    else this.play();
+    // if (this.state.isPlaying) this.pause();
+    // else this.play();
+    store.dispatch(toggle());
   }
 
   next () {
-    this.startSong(...skip(1, this.state));
+    // this.startSong(...skip(1, this.state));
+    store.dispatch(next());
   }
 
   prev () {
-    this.startSong(...skip(-1, this.state));
+    // this.startSong(...skip(-1, this.state));
+    store.dispatch(prev());
   }
 
   setProgress (progress) {
@@ -193,7 +205,7 @@ export default class AppContainer extends Component {
 
   render () {
 
-    const props = Object.assign({}, this.state, {
+    const props = Object.assign({}, this.state.player, {
       toggleOne: this.toggleOne,
       toggle: this.toggle,
       selectAlbum: this.selectAlbum,
@@ -215,9 +227,9 @@ export default class AppContainer extends Component {
         }
         </div>
         <Player
-          currentSong={this.state.currentSong}
-          currentSongList={this.state.currentSongList}
-          isPlaying={this.state.isPlaying}
+          currentSong={this.state.player.currentSong}
+          currentSongList={this.state.player.currentSongList}
+          isPlaying={this.state.player.isPlaying}
           progress={this.state.progress}
           next={this.next}
           prev={this.prev}
