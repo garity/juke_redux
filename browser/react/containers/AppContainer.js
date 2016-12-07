@@ -13,7 +13,9 @@ import Player from '../components/Player';
 import { convertAlbum, convertAlbums, convertSong, skip } from '../utils';
 
 import store from '../store';
-import {play, pause, load, startSong, toggle, toggleOne, next, prev } from '../action-creators/player';
+import {
+  play, pause, load, startSong, toggle, toggleOne, next, prev } from '../action-creators/player';
+import { fetchAlbum, fetchAlbums } from '../action-creators/albums';
 
 export default class AppContainer extends Component {
 
@@ -37,17 +39,19 @@ export default class AppContainer extends Component {
     this.unsubscribe = store.subscribe( () => {
       this.setState(store.getState());
     });
-    
-    Promise
-      .all([
-        axios.get('/api/albums/'),
-        axios.get('/api/artists/'),
-        axios.get('/api/playlists')
-      ])
-      .then(res => res.map(r => r.data))
-      .then(data => this.onLoad(...data));
-      
-    
+
+    this.onLoad();
+
+    // Promise
+    //   .all([
+    //     //axios.get('/api/albums/'),
+    //     axios.get('/api/artists/'),
+    //     axios.get('/api/playlists')
+    //   ])
+    //   .then(res => res.map(r => r.data))
+    //   .then(data => this.onLoad(...data));
+
+
     console.log(this.state);
     AUDIO.addEventListener('ended', () =>
       this.next());
@@ -59,12 +63,16 @@ export default class AppContainer extends Component {
     this.unsubscribe();
   }
 
-  onLoad (albums, artists, playlists) {
-    this.setState({
-      albums: convertAlbums(albums),
-      artists: artists,
-      playlists: playlists
-    });
+  onLoad () {
+    store.dispatch(fetchAlbums());
+    store.dispatch(fetchArtists()); //todo
+    store.dispatch(fetchPlaylists()); //todo
+
+    // this.setState({
+    //   //albums: convertAlbums(albums),
+    //   artists: artists,
+    //   playlists: playlists
+    // });
   }
 
   play () {
@@ -124,11 +132,12 @@ export default class AppContainer extends Component {
   }
 
   selectAlbum (albumId) {
-    axios.get(`/api/albums/${albumId}`)
-      .then(res => res.data)
-      .then(album => this.setState({
-        selectedAlbum: convertAlbum(album)
-      }));
+    // axios.get(`/api/albums/${albumId}`)
+    //   .then(res => res.data)
+    //   .then(album => this.setState({
+    //     selectedAlbum: convertAlbum(album)
+    //   }));
+    store.dispatch(fetchAlbum(albumId));
   }
 
   selectArtist (artistId) {
