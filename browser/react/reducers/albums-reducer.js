@@ -12,11 +12,11 @@ export default function (state = initialState, action) {
   switch(action.type) {
 
     case RECEIVE_ALBUM:
-      newState.selectedAlbum = action.selectedAlbum;
+      newState = {selectedAlbum: action.selectedAlbum};
       break;
 
     case RECEIVE_ALBUMS:
-      newState.albums = action.albums;
+      newState = {albums: action.albums};
 
     default:
       return state;
